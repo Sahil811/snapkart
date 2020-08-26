@@ -2,6 +2,23 @@ import React from "react";
 import formatCurrency from "../utill";
 
 class Cart extends React.Component {
+  state = { showCheckout: false, name: "", email: "", address: "" };
+
+  handleInput = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  createOrder = (e) => {
+    e.preventDefault();
+    const order = {
+      name: this.state.name,
+      email: this.state.email,
+      address: this.state.address,
+      cartItems: this.props.cartItems,
+    };
+    this.props.createOrder(order);
+  };
+
   render() {
     const { cartItems } = this.props;
     return (
@@ -18,7 +35,7 @@ class Cart extends React.Component {
           <div className="chart">
             <ul className="cart-items">
               {cartItems.map((item) => (
-                <li>
+                <li key={item._id}>
                   <div>
                     <img src={item.image} alt={item.title}></img>
                   </div>
@@ -39,18 +56,70 @@ class Cart extends React.Component {
               ))}
             </ul>
           </div>
-          {cartItems.length !== 0 && (
-            <div className="cart">
-              <div className="total">
-                <div>
-                  Total:{" "}
-                  {formatCurrency(
-                    cartItems.reduce((a, c) => a + c.price * c.count, 0)
-                  )}
-                </div>
 
-                <button className="button primary">Proceed</button>
+          {cartItems.length !== 0 && (
+            <div>
+              <div className="cart">
+                <div className="total">
+                  <div>
+                    Total:{" "}
+                    {formatCurrency(
+                      cartItems.reduce((a, c) => a + c.price * c.count, 0)
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => this.setState({ showCheckout: true })}
+                    className="button primary"
+                  >
+                    Proceed
+                  </button>
+                </div>
               </div>
+
+              {this.state.showCheckout && (
+                <div className="chart">
+                  <form onSubmit={this.createOrder}>
+                    <ul className="form-container">
+                      <li>
+                        <label>Email</label>
+                        <input
+                          name="email"
+                          type="email"
+                          require
+                          onChange={this.handleInput}
+                        ></input>
+                      </li>
+
+                      <li>
+                        <label>Name</label>
+                        <input
+                          name="name"
+                          type="text"
+                          require
+                          onChange={this.handleInput}
+                        ></input>
+                      </li>
+
+                      <li>
+                        <label>Address</label>
+                        <input
+                          name="address"
+                          type="text"
+                          require
+                          onChange={this.handleInput}
+                        ></input>
+                      </li>
+
+                      <li>
+                        <button className="button primary" type="submit">
+                          Checkout
+                        </button>
+                      </li>
+                    </ul>
+                  </form>
+                </div>
+              )}
             </div>
           )}
         </div>
