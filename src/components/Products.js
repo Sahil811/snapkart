@@ -107,7 +107,7 @@ class Products extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  products: state.products.items,
+  products: state.products.filteredItems,
 });
 
 const mapDispatchToProps = (dispatch) => ({
