@@ -2,14 +2,17 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const shortid = require("shortid");
+const dotenv = require("dotenv");
 
 const app = express();
 
+dotenv.config({ path: `${__dirname}/config.env` });
+
 app.use(bodyParser.json());
 
-const mongodbUrl = "mongodb://localhost/snapkart";
+//const mongodbUrl = "mongodb://localhost/snapkart";
 mongoose
-  .connect(mongodbUrl, {
+  .connect(process.env.MONGODB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
@@ -86,6 +89,15 @@ app.post("/api/orders", async (req, res) => {
   }
 
   const order = await Order(req.body).save();
+  res.send(order);
+});
+
+app.get("/api/orders", async (req, res) => {
+  const orders = await Order.find({});
+  res.send(orders);
+});
+app.delete("/api/orders/:id", async (req, res) => {
+  const order = await Order.findByIdAndDelete(req.params.id);
   res.send(order);
 });
 
